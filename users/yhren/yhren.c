@@ -1,5 +1,7 @@
 #include "yhren.h"
 
+userspace_config_t userspace_config;
+
 enum combos {
   JK_RPRN,
   JL_RBRC,
