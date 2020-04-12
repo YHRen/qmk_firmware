@@ -3,7 +3,7 @@
 #include "lib/lib8tion/lib8tion.h"
 extern led_config_t g_led_config;
 
-// static uint32_t hypno_timer;
+static uint32_t hypno_timer;
 #if defined(SPLIT_KEYBOARD) || defined(KEYBOARD_ergodox_ez) || defined(KEYBOARD_crkbd)
 #    define RGB_MATRIX_REST_MODE RGB_MATRIX_CYCLE_OUT_IN_DUAL
 #else

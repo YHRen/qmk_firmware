@@ -1,5 +1,8 @@
 #include QMK_KEYBOARD_H
 
+#define KC_RESET RESET
+#define KC_RST   KC_RESET
+
 #define __QWERT_L1__   KC_TAB  , KC_Q       , KC_W    , KC_E     , KC_R    , KC_T
 #define __QWERT_L2__   KC_LCTL , KC_A       , KC_S    , KC_D     , KC_F    , KC_G
 #define __QWERT_L3__   KC_LSFT , KC_Z       , KC_X    , KC_C     , KC_V    , KC_B
