@@ -23,12 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Select hand configuration */
 
 // #define MASTER_LEFT
-// #define MASTER_RIGHT
-#define EE_HANDS
+#define MASTER_RIGHT
+// #define EE_HANDS
 
 #undef USE_I2C
 
 #undef SSD1306OLED
+// #define SSD1306OLED
 
 #define USE_SERIAL_PD2
 
@@ -59,6 +60,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define RGB_MATRIX_SPD_STEP 10
 #endif
 
+#ifdef HAPTIC_ENABLE
+#    define SOLENOID_PIN B7
+#endif
+
 #undef PRODUCT
 #undef VENDOR_ID
 #undef PRODUCT_ID
@@ -70,9 +75,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICE_VER      0x0102 // v1.s
 #define MANUFACTURER    Corne
 
-#define OLED_FONT_H "keyboards/crkbd/keymaps/drashna/glcdfont.c"
+#define OLED_FONT_H "keyboards/crkbd/keymaps/yhren/glcdfont.c"
 // #define OLED_FONT_WIDTH 5
 // #define OLED_FONT_HEIGHT 7
 
 #define OLED_DISABLE_TIMEOUT
 #define TAPPING_TERM_PER_KEY
+#define SPLIT_TRANSPORT_MIRROR
+#define SPLIT_KEYBOARD
+#ifndef NO_DEBUG
+#define NO_DEBUG
+#endif // !NO_DEBUG

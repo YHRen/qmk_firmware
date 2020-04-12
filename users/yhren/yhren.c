@@ -1,9 +1,5 @@
 #include "yhren.h"
 
-#ifdef RGBLIGHT_ENABLE
-extern rgblight_config_t rgblight_config;
-#endif
-
 enum combos {
   JK_RPRN,
   JL_RBRC,
