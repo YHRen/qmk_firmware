@@ -64,6 +64,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define SOLENOID_PIN B7
 #endif
 
+
+#ifdef BACKLIGHT_ENABLE
+#    define BACKLIGHT_PIN B7
+#endif
+
 #undef PRODUCT
 #undef VENDOR_ID
 #undef PRODUCT_ID
@@ -75,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICE_VER      0x0102 // v1.s
 #define MANUFACTURER    Corne
 
-#define OLED_FONT_H "keyboards/crkbd/keymaps/yhren/glcdfont.c"
+#define OLED_FONT_H "users/yhren/glcdfont.c"
 // #define OLED_FONT_WIDTH 5
 // #define OLED_FONT_HEIGHT 7
 

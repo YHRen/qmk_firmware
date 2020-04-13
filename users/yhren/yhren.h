@@ -48,6 +48,7 @@ enum userspace_keycodes {
   QWERTY = SAFE_RANGE,
   PLOVER,
   BACKLIT,
+  RGBRST,
   EXT_PLV,
   MY_POINTER,
   MY_COUT,
