@@ -111,6 +111,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+    case RGBRST:
+      #ifdef RGBLIGHT_ENABLE
+        if (record->event.pressed) {
+          eeconfig_update_rgblight_default();
+          rgblight_enable();
+          RGB_current_mode = rgblight_config.mode;
+        }
+      #endif
+      #ifdef RGB_MATRIX_ENABLE
+        if (record->event.pressed) {
+          eeconfig_update_rgb_matrix_default();
+          rgb_matrix_enable();
+        }
+      #endif
+      break;
   }
   return true;
 }

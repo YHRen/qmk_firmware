@@ -20,7 +20,7 @@ RGB_MATRIX_ENABLE          = WS2812
 #RGB_MATRIX_ENABLE          = no
 
 HAPTIC_ENABLE = SOLENOID
-#HAPTIC_ENABLE = 
+#HAPTIC_ENABLE = no
 # Do not enable SLEEP_LED_ENABLE. it uses the same timer as BACKLIGHT_ENABLE
 SLEEP_LED_ENABLE = no    # Breathing sleep LED during USB suspend
 
