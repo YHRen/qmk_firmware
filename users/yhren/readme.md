@@ -21,3 +21,4 @@ online glcdfont [editor](https://helixfonteditor.netlify.com/)
 
 glcdfont [converter](https://github.com/soundmonster/glcdfont_converter.git)
 
+[using ee](https://github.com/qmk/qmk_firmware/tree/master/keyboards/lets_split)
