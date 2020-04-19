@@ -42,7 +42,6 @@ void render_status_main(void) {
             memcpy(hid_msg_str, hid_bf, sizeof(hid_msg_str));
         }
         render_space();
-        render_space();
         render_hid_bf();
     }else if(!is_hid_connected){
         render_space();
@@ -52,14 +51,14 @@ void render_status_main(void) {
     }
 }
 
-static const char PROGMEM bar0[] = {0x01, 0};
+static const char PROGMEM bar0[] = {0x20, 0};
 static const char PROGMEM bar1[] = {0xb3, 0};
 static const char PROGMEM bar2[] = {0xd3, 0};
 static const char PROGMEM bar3[] = {0xd2, 0};
 static const char PROGMEM bar4[] = {0xd1, 0};
 static const char PROGMEM err [] = {0x23, 0};
 void render_hid_bf(void) {
-    int lines = 4;
+    int lines = 5;
     for(int i = 1; i < lines*5+1; ++i){
         uint8_t j = (uint8_t)hid_msg_str[i];
         switch(j){
@@ -82,7 +81,7 @@ void render_hid_bf(void) {
                 oled_write_P(err, false);
         }
     }
-    oled_write_ln("CMNPA",0);
+    oled_write_ln("CMGPN",0);
     is_new = false;
 }
 
