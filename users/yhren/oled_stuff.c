@@ -3,14 +3,17 @@
 extern uint8_t  is_master;
 bool            is_hid_connected = false;
 bool            is_new = false;
+static uint32_t oled_timer = 0;
 
 #define MSG_LEN 32
+#define DISCONNECT_TIMEOUT 5000
 char hid_bf[SCREEN_BUFFER_LEN] = {0};
 char hid_msg_str[MSG_LEN] = {0};
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     is_hid_connected = true;
     memcpy((char *)&hid_bf[0], data, sizeof(hid_bf));
+    oled_timer = timer_read32();
     is_new = true;
 }
 
@@ -41,48 +44,34 @@ void render_status_main(void) {
         if(is_new) {
             memcpy(hid_msg_str, hid_bf, sizeof(hid_msg_str));
         }
-        render_space();
         render_hid_bf();
     }else if(!is_hid_connected){
         render_space();
         render_mod_status_gui_alt(get_mods() | get_oneshot_mods());
         render_mod_status_ctrl_shift(get_mods() | get_oneshot_mods());
-        //hid_init();
+        render_space();
+        render_space();
+        render_space();
     }
 }
 
-static const char PROGMEM bar0[] = {0x20, 0};
-static const char PROGMEM bar1[] = {0xb3, 0};
-static const char PROGMEM bar2[] = {0xd3, 0};
-static const char PROGMEM bar3[] = {0xd2, 0};
-static const char PROGMEM bar4[] = {0xd1, 0};
-static const char PROGMEM err [] = {0x23, 0};
 void render_hid_bf(void) {
-    int lines = 5;
-    for(int i = 1; i < lines*5+1; ++i){
+    static const char PROGMEM bar[][6] = {{0x20, 0}, {0xb3,
+        0}, {0xd3, 0}, {0xd2, 0}, {0xd1, 0}, {0x23, 0}};
+    static const uint8_t OFFSET = 1;
+    static const uint8_t LINES = 5*5+OFFSET;
+    oled_write_P(PSTR("-----"), false);
+    for(uint8_t i = OFFSET; i < LINES; ++i){
         uint8_t j = (uint8_t)hid_msg_str[i];
-        switch(j){
-            case 0x00:
-                oled_write_P(bar0, false);
-                break;
-            case 0x01:
-                oled_write_P(bar1, false);
-                break;
-            case 0x02:
-                oled_write_P(bar2, false);
-                break;
-            case 0x03:
-                oled_write_P(bar3, false);
-                break;
-            case 0x04:
-                oled_write_P(bar4, false);
-                break;
-            default:
-                oled_write_P(err, false);
-        }
+        oled_write_P(bar[j], false);
+        //if( j >=5 ) oled_write_P(bar[5], false);
     }
-    oled_write_ln("CMGPN",0);
+    static const char PROGMEM cmgpn[] = {0x07, 0x08, 0x4e, 0x56, 0x09, 0};
+    oled_write_P(cmgpn, false);
     is_new = false;
+    if(timer_elapsed32(oled_timer) > DISCONNECT_TIMEOUT){
+        is_hid_connected = false;
+    }
 }
 
 void oled_task_user(void) {
@@ -242,14 +231,19 @@ void render_mod_status_ctrl_shift(uint8_t modifiers) {
 }
 
 void render_logo(void) {
-    static const char PROGMEM corne_logo[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0};
-    oled_write_P(corne_logo, false);
-    if (is_master) {
-        oled_write_P(PSTR(" Ray "), is_hid_connected);
+    static const char PROGMEM logo[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0};
+    if (is_master && is_hid_connected){
+        oled_write_P(logo, true);
+        oled_write_P(PSTR(">link"), false);
+    }else if (is_master) {
+        oled_write_P(logo, false);
+        oled_write_P(PSTR(" Ray "), false);
     } else {
         oled_write_P(PSTR(" Ren "), false);
     }
 }
 
-void render_space(void) { oled_write_ln_P(PSTR(" "), false); }
+void render_space(void) {
+    oled_write_ln_P(PSTR(" "), false); 
+}
 
