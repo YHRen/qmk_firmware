@@ -1,29 +1,44 @@
 #include "yhren.h"
 
 extern uint8_t  is_master;
-bool            is_hid_connected = false;
 bool            is_new = false;
 static uint32_t oled_timer = 0;
+bool is_hid_connected = false;
+bool is_hid_enabled = false;
 
 #define MSG_LEN 32
 #define DISCONNECT_TIMEOUT 5000
-char hid_bf[SCREEN_BUFFER_LEN] = {0};
+char hid_rcv_buf[SCREEN_BUFFER_LEN] = {0};
+char hid_snd_buf[SCREEN_BUFFER_LEN] = {0};
 char hid_msg_str[MSG_LEN] = {0};
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-    is_hid_connected = true;
-    memcpy((char *)&hid_bf[0], data, sizeof(hid_bf));
-    oled_timer = timer_read32();
-    is_new = true;
+    if( is_hid_enabled ){
+        is_hid_connected = true;
+        memcpy((char *)&hid_rcv_buf[0], data, sizeof(hid_rcv_buf));
+        oled_timer = timer_read32();
+        is_new = true;
+    }
 }
 
 void hid_init(void) {
-    uint8_t msg[SCREEN_BUFFER_LEN];
-    msg[0] = 0;
-    msg[1] = 1;
-    raw_hid_send(msg, SCREEN_BUFFER_LEN);
+    // msg content not working
+    hid_snd_buf[0] = 1;
+    hid_snd_buf[1] = 1;
+    hid_snd_buf[2] = 'b';
+    raw_hid_send((uint8_t *)hid_msg_str, SCREEN_BUFFER_LEN);
+    is_hid_enabled = true;
 }
 
+void hid_close(void){
+    // msg content not working
+    hid_snd_buf[0] = 1;
+    hid_snd_buf[1] = 1; 
+    hid_snd_buf[2] = 'd';
+    hid_snd_buf[3] = 'c';
+    raw_hid_send((uint8_t *)hid_msg_str, SCREEN_BUFFER_LEN);
+    is_hid_enabled = false;
+}
 
 void render_status_secondary(void) {
     render_logo();
@@ -40,12 +55,12 @@ void render_status_main(void) {
     render_space();
     render_layer_state();
 
-    if (is_hid_connected){
+    if (is_hid_connected && is_hid_enabled){
         if(is_new) {
-            memcpy(hid_msg_str, hid_bf, sizeof(hid_msg_str));
+            memcpy(hid_msg_str, hid_rcv_buf, sizeof(hid_msg_str));
         }
-        render_hid_bf();
-    }else if(!is_hid_connected){
+        render_hid_msg();
+    }else{
         render_space();
         render_mod_status_gui_alt(get_mods() | get_oneshot_mods());
         render_mod_status_ctrl_shift(get_mods() | get_oneshot_mods());
@@ -53,9 +68,10 @@ void render_status_main(void) {
         render_space();
         render_space();
     }
+    if(is_hid_connected && !is_hid_enabled) is_hid_connected = false;
 }
 
-void render_hid_bf(void) {
+void render_hid_msg(void) {
     static const char PROGMEM bar[][6] = {{0x20, 0}, {0xb3,
         0}, {0xd3, 0}, {0xd2, 0}, {0xd1, 0}, {0x23, 0}};
     static const uint8_t OFFSET = 1;

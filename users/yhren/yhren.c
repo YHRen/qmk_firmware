@@ -1,5 +1,8 @@
 #include "yhren.h"
 
+#if defined(OLED_DRIVER_ENABLE)
+extern bool is_hid_enabled;
+#endif
 userspace_config_t userspace_config;
 
 enum combos {
@@ -125,6 +128,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           rgb_matrix_enable();
         }
       #endif
+      break;
+    case MY_HIDRAW:
+      if (record->event.pressed) {
+          #if defined(OLED_DRIVER_ENABLE)
+          if( is_hid_enabled ){
+              hid_close();
+          }else{
+              hid_init();
+          }
+          #endif
+      }
+      return false;
       break;
   }
   return true;
