@@ -53,7 +53,8 @@ enum userspace_keycodes {
   MY_POINTER,
   MY_COUT,
   MY_CIN,
-  MY_END
+  MY_END,
+  MY_HIDRAW,
 };
 
 typedef union {
@@ -65,6 +66,5 @@ typedef union {
 } userspace_config_t;
 
 extern userspace_config_t userspace_config;
-
 
 #endif

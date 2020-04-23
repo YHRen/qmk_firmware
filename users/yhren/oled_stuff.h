@@ -14,6 +14,6 @@ void render_mod_status_ctrl_shift(uint8_t modifiers);
 void render_mod_status_gui_alt(uint8_t modifiers);
 
 // HID stuff
-void render_hid_bf(void);
+void render_hid_msg(void);
 void hid_init(void);
-
+void hid_close(void);
