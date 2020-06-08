@@ -2,7 +2,8 @@
 
 extern uint8_t  is_master;
 bool            is_new = false;
-static uint32_t oled_timer = 0;
+static uint32_t oled_connection_timer = 0;
+uint32_t oled_screen_timer = 0;
 bool is_hid_connected = false;
 bool is_hid_enabled = false;
 
@@ -16,7 +17,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     if( is_hid_enabled ){
         is_hid_connected = true;
         memcpy((char *)&hid_rcv_buf[0], data, sizeof(hid_rcv_buf));
-        oled_timer = timer_read32();
+        oled_connection_timer = timer_read32();
         is_new = true;
     }
 }
@@ -33,7 +34,7 @@ void hid_init(void) {
 void hid_close(void){
     // msg content not working
     hid_snd_buf[0] = 1;
-    hid_snd_buf[1] = 1; 
+    hid_snd_buf[1] = 1;
     hid_snd_buf[2] = 'd';
     hid_snd_buf[3] = 'c';
     raw_hid_send((uint8_t *)hid_msg_str, SCREEN_BUFFER_LEN);
@@ -85,12 +86,18 @@ void render_hid_msg(void) {
     static const char PROGMEM cmgpn[] = {0x07, 0x08, 0x4e, 0x56, 0x09, 0};
     oled_write_P(cmgpn, false);
     is_new = false;
-    if(timer_elapsed32(oled_timer) > DISCONNECT_TIMEOUT){
+    if(timer_elapsed32(oled_connection_timer) > DISCONNECT_TIMEOUT){
         is_hid_connected = false;
     }
 }
 
 void oled_task_user(void) {
+    if(timer_elapsed32(oled_screen_timer) > 30000){
+        oled_off();
+        return;
+    }else{
+        oled_on();
+    }
     if (is_master) {
         render_status_main();  // Renders the current keyboard state (layer, lock, caps, scroll, etc)
     } else {
@@ -248,18 +255,15 @@ void render_mod_status_ctrl_shift(uint8_t modifiers) {
 
 void render_logo(void) {
     static const char PROGMEM logo[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0};
-    if (is_master && is_hid_connected){
-        oled_write_P(logo, true);
-        oled_write_P(PSTR(">link"), false);
-    }else if (is_master) {
-        oled_write_P(logo, false);
-        oled_write_P(PSTR(" Ray "), false);
+    oled_write_P(logo, is_hid_connected);
+    if (is_hid_connected) {
+        oled_write_P((is_master ? PSTR(">link") : PSTR("link<")), false);
     } else {
-        oled_write_P(PSTR(" Ren "), false);
+        oled_write_P((is_master ? PSTR(" Ray ") : PSTR(" Ren ")), false);
     }
 }
 
 void render_space(void) {
-    oled_write_ln_P(PSTR(" "), false); 
+    oled_write_ln_P(PSTR(" "), false);
 }
 

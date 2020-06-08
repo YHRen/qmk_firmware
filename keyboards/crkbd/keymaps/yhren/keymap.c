@@ -14,29 +14,33 @@
 
 #define LAYOUT_crkbd_base_wrapper(...)       LAYOUT_crkbd_base(__VA_ARGS__)
 
+#ifdef OLED_DRIVER_ENABLE
+oled_rotation_t oled_init_user(oled_rotation_t rotation) { return OLED_ROTATION_270; }
+#endif
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_crkbd_base_wrapper( \
             __QWERT_L1__ , __QWERT_R1__ ,  \
             __QWERT_L2__ , __QWERT_R2__ ,  \
-            __QWERT_L3__ , __QWERT_R3__ 
+            __QWERT_L3__ , __QWERT_R3__
             ),
 
     [_LOWER] = LAYOUT_crkbd_base_wrapper(\
             __LOWER_L1__ , __LOWER_R1__ ,  \
             __LOWER_L2__ , __LOWER_R2__ ,  \
-            __LOWER_L3__ , __LOWER_R3__ 
+            __LOWER_L3__ , __LOWER_R3__
             ),
 
     [_RAISE] = LAYOUT_crkbd_base_wrapper(\
             __RAISE_L1__ , __RAISE_R1__ ,  \
             __RAISE_L2__ , __RAISE_R2__ ,  \
-            __RAISE_L3__ , __RAISE_R3__ 
+            __RAISE_L3__ , __RAISE_R3__
             ),
 
     [_ADJUST] = LAYOUT_crkbd_base_wrapper( \
             __ADJST_L1__ , __ADJST_R1__ ,  \
             __ADJST_L2__ , __ADJST_R2__ ,  \
-            __ADJST_L3__ , __ADJST_R3__ 
+            __ADJST_L3__ , __ADJST_R3__
             )
 };
 
@@ -45,6 +49,3 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
-#ifdef OLED_DRIVER_ENABLE
-oled_rotation_t oled_init_user(oled_rotation_t rotation) { return OLED_ROTATION_270; }
-#endif

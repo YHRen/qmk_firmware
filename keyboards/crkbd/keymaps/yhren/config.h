@@ -21,10 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 /* Select hand configuration */
-
-// #define MASTER_LEFT
+/* #define MASTER_LEFT */
 #define MASTER_RIGHT
 // #define EE_HANDS
+// for elite-c controller
+// sudo make crkbd:yhren:dfu
+// for pro micro controller
+// sudo make crkbd:yhren:avrdude
 
 #undef USE_I2C
 
@@ -73,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #undef VENDOR_ID
 #undef PRODUCT_ID
 #undef DEVICE_VER
-#undef MANUFACTURER 
+#undef MANUFACTURER
 #define PRODUCT         yhren_corne
 #define VENDOR_ID       0x3141 // pi
 #define PRODUCT_ID      0x4242 // 42 keys
