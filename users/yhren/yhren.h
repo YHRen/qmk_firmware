@@ -7,6 +7,9 @@
 #include "version.h"
 #include "eeprom.h"
 #include "wrapper.h"
+#include "analog.h"
+#include "pointing_device.h"
+#include "math.h"
 //#include "process_records.h"
 #ifdef TAP_DANCE_ENABLE
 #    include "tap_dances.h"

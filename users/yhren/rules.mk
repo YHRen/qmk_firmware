@@ -30,3 +30,7 @@ ifeq ($(strip $(OLED_DRIVER_ENABLE)), yes)
     SRC += oled_stuff.c
 endif
 
+ifeq ($(strip $(JOYSTICK_ENABLE)), yes)
+	SRC += analog.c
+endif
+
