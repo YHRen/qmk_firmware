@@ -65,21 +65,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 uint16_t minAxisValue = 0;
 uint16_t maxAxisValue = 1023;
 
-#define XMIN 165
-#define XMAX 808
-#define XCEN 560
-
-#define YMIN 245
-#define YMAX 845
-#define YCEN 582
-
 #define DEADZ 60
 #define ONES(x) (fmax(fmin(x, 1.0), -1.0))
 #define SIGN(x) ((x > 0) - (x < 0))
 
-uint8_t maxCursorSpeed = 2;  // without holding shift
-uint8_t precisionSpeed = 1;  // with holding shift
-uint8_t speedRegulator = 10; // Lower Values Create Faster Movement
+float maxCursorSpeed = 0.5;  // holding shift
+float cursorSpeed = 0.2;
 
 int8_t xPolarity = 1;
 int8_t yPolarity = -1;
@@ -90,8 +81,8 @@ int16_t xcen, ycen;
 
 uint16_t lastCursor = 0;
 
-const pin_t xPin = F0;
-const pin_t yPin = F1;
+const pin_t xPin = B4; //F0;
+const pin_t yPin = B5; //F1;
 
 int16_t axisCoordinate(pin_t pin, uint16_t origin) {
     int8_t  direction;
@@ -152,9 +143,13 @@ void pointing_device_task(void) {
         float yperc = ONES(yd/ycen * 2);
         int8_t xmove = (int8_t)(ONES(xperc) * 127.0);
         int8_t ymove = (int8_t)(ONES(yperc) * 127.0);
-
-        report.x = xPolarity * xmove * 0.1;
-        report.y = yPolarity * ymove * 0.1;
+        if (get_mods() & MOD_MASK_SHIFT){
+            report.x = xPolarity * xmove * maxCursorSpeed;
+            report.y = yPolarity * ymove * maxCursorSpeed;
+        } else {
+            report.x = xPolarity * xmove * cursorSpeed;
+            report.y = yPolarity * ymove * cursorSpeed;
+        }
         report.h = 0;
         report.v = 0;
         //scrolltimer = 0;
