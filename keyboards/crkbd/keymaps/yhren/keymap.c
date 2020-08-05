@@ -53,12 +53,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 
-// analogReference( ADC_REF_POWER );  // internal 2.56V
 
-// Joystick
-// Set Pins
-// const pin_t xPin = 0x00; // VRx
-// const pin_t yPin = 0x01; // VRy
 //int swPin = C4; // SW
 
 // Set Parameters
@@ -81,8 +76,8 @@ int16_t xcen, ycen;
 
 uint16_t lastCursor = 0;
 
-const pin_t xPin = B4; //F0;
-const pin_t yPin = B5; //F1;
+const pin_t xPin = B5; //F0;
+const pin_t yPin = B4; //F1;
 
 int16_t axisCoordinate(pin_t pin, uint16_t origin) {
     int8_t  direction;
