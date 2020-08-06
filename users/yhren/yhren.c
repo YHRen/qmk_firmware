@@ -4,6 +4,7 @@
 extern bool is_hid_enabled;
 extern uint32_t oled_screen_timer;
 #endif
+
 userspace_config_t userspace_config;
 
 enum combos {
@@ -148,4 +149,5 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
 
