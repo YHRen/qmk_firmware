@@ -10,12 +10,12 @@
 #define __QWERT_R2__   KC_H      , KC_J       , KC_K    , KC_L     , KC_SCLN , KC_QUOT
 #define __QWERT_R3__   KC_N      , KC_M       , KC_COMM , KC_DOT   , KC_SLSH , KC_RSFT
 
-#define __LOWER_L1__   KC_NO     , MY_POINTER , MY_END  , KC_GRAVE , KC_TILD , KC_NO
-#define __LOWER_L2__   KC_TRNS   , KC_EXLM    , KC_AT   , KC_HASH  , KC_DLR  , KC_PERC
-#define __LOWER_L3__   KC_TRNS   , KC_NO      , KC_NO   , KC_NO    , KC_NO   , KC_NO
-#define __LOWER_R1__   KC_NO     , KC_EQL     , KC_PIPE , KC_MINS  , KC_NO   , KC_DEL
-#define __LOWER_R2__   KC_CIRC   , KC_AMPR    , KC_ASTR , KC_UNDS  , KC_PLUS , KC_BSLASH
-#define __LOWER_R3__   KC_NO     , KC_NO      , KC_NO   , KC_NO    , KC_NO   , KC_TRNS
+#define __LOWER_L1__   KC_NO   , MY_POINTER , MY_END     , KC_GRAVE , KC_TILD , KC_NO
+#define __LOWER_L2__   KC_TRNS , KC_EXLM    , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC
+#define __LOWER_L3__   KC_TRNS , KC_MS_BTN1 , KC_MS_BTN2 , KC_NO    , KC_NO   , KC_NO
+#define __LOWER_R1__   KC_NO   , KC_EQL     , KC_PIPE    , KC_MINS  , KC_NO   , KC_DEL
+#define __LOWER_R2__   KC_CIRC , KC_AMPR    , KC_ASTR    , KC_UNDS  , KC_PLUS , KC_BSLASH
+#define __LOWER_R3__   KC_NO   , KC_NO      , KC_NO      , KC_NO    , KC_NO   , KC_TRNS
 
 #define __RAISE_L1__   KC_F1     , KC_F2      , KC_F3   , KC_F4    , KC_F5   , KC_F6
 #define __RAISE_L2__   KC_TRNS   , KC_1       , KC_2    , KC_3     , KC_4    , KC_5

@@ -60,12 +60,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 uint16_t minAxisValue = 0;
 uint16_t maxAxisValue = 1023;
 
-#define DEADZ 60
+#define DEADZ 70
 #define ONES(x) (fmax(fmin(x, 1.0), -1.0))
 #define SIGN(x) ((x > 0) - (x < 0))
 
-float maxCursorSpeed = 0.5;  // holding shift
-float cursorSpeed = 0.2;
+float maxCursorSpeed = 0.7;  // holding shift
+float cursorSpeed = 0.3;
 
 int8_t xPolarity = 1;
 int8_t yPolarity = -1;
@@ -76,52 +76,8 @@ int16_t xcen, ycen;
 
 uint16_t lastCursor = 0;
 
-const pin_t xPin = B5; //F0;
-const pin_t yPin = B4; //F1;
-
-int16_t axisCoordinate(pin_t pin, uint16_t origin) {
-    int8_t  direction;
-    int16_t distanceFromOrigin;
-    int16_t range;
-
-    int16_t position = analogReadPin(pin);
-
-    if (origin == position) {
-        return 0;
-    } else if (origin > position) {
-        distanceFromOrigin = origin - position;
-        range              = origin - minAxisValue;
-        direction          = -1;
-    } else {
-        distanceFromOrigin = position - origin;
-        range              = maxAxisValue - origin;
-        direction          = 1;
-    }
-
-    float   percent    = (float)distanceFromOrigin / range;
-    int16_t coordinate = (int16_t)(percent * 100);
-    if (coordinate < 0) {
-        return 0;
-    } else if (coordinate > 100) {
-        return 100 * direction;
-    } else {
-        return coordinate * direction;
-    }
-}
-
-// int8_t axisToMouseComponent(pin_t pin, int16_t origin, uint8_t maxSpeed, int8_t polarity) {
-//     int coordinate = axisCoordinate(pin, origin);
-//     if (coordinate == 0) {
-//         return 0;
-//     } else {
-//         float percent = (float)coordinate / 100;
-//         if (keyboard_report->mods & MOD_BIT(KC_LSFT)) {
-//             return percent * precisionSpeed * polarity * (abs(coordinate) / speedRegulator);
-//         } else {
-//             return percent * maxCursorSpeed * polarity * (abs(coordinate) / speedRegulator);
-//         }
-//     }
-// }
+const pin_t xPin = B5;
+const pin_t yPin = B4;
 
 void pointing_device_task(void) {
     if (timer_elapsed(lastCursor) < cursorTimeout) return;
@@ -141,12 +97,15 @@ void pointing_device_task(void) {
         if (get_mods() & MOD_MASK_SHIFT){
             report.x = xPolarity * xmove * maxCursorSpeed;
             report.y = yPolarity * ymove * maxCursorSpeed;
-        } else {
+        } else if (get_mods() & MOD_MASK_GUI) {
+            report.h = xPolarity * xmove * cursorSpeed;
+            report.v = xPolarity * ymove * cursorSpeed;
+        }else{
             report.x = xPolarity * xmove * cursorSpeed;
             report.y = yPolarity * ymove * cursorSpeed;
         }
-        report.h = 0;
-        report.v = 0;
+        // report.h = 0;
+        // report.v = 0;
         //scrolltimer = 0;
     }
 
