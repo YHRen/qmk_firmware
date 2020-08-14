@@ -54,30 +54,31 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 
-//int swPin = C4; // SW
 
 // Set Parameters
-uint16_t minAxisValue = 0;
-uint16_t maxAxisValue = 1023;
-
-#define DEADZ 70
 #define ONES(x) (fmax(fmin(x, 1.0), -1.0))
 #define SIGN(x) ((x > 0) - (x < 0))
+//int swPin = C4; // SW
+const pin_t xPin = B5;
+const pin_t yPin = B4;
 
-float maxCursorSpeed = 0.7;  // holding shift
-float cursorSpeed = 0.3;
+uint16_t x_scale = 128;
+uint16_t y_scale = 128;
+uint16_t x_dead = 24;
+uint16_t y_dead = 24;
+int16_t xcen, ycen;
+
+float maxCursorSpeed = 0.9;  // holding shift
+float minCursorSpeed = 0.3;
+float maxScrollSpeed = 0.3;  // holding shift
+float minScrollSpeed = 0.1;
 
 int8_t xPolarity = 1;
 int8_t yPolarity = -1;
 
 uint8_t cursorTimeout = 100;
-
-int16_t xcen, ycen;
-
 uint16_t lastCursor = 0;
 
-const pin_t xPin = B5;
-const pin_t yPin = B4;
 
 void pointing_device_task(void) {
     if (timer_elapsed(lastCursor) < cursorTimeout) return;
@@ -86,31 +87,24 @@ void pointing_device_task(void) {
     report_mouse_t report = pointing_device_get_report();
     int16_t x = analogReadPin(xPin);
     int16_t y = analogReadPin(yPin);
-    float xd = x-xcen;
-    float yd = y-ycen;
-    float dist = sqrt(powf(xd, 2) * powf(yd, 2));
-    if (dist > DEADZ) {
-        float xperc = ONES(xd/xcen * 2);
-        float yperc = ONES(yd/ycen * 2);
-        int8_t xmove = (int8_t)(ONES(xperc) * 127.0);
-        int8_t ymove = (int8_t)(ONES(yperc) * 127.0);
-        if (get_mods() & MOD_MASK_SHIFT){
-            report.x = xPolarity * xmove * maxCursorSpeed;
-            report.y = yPolarity * ymove * maxCursorSpeed;
-        } else if (get_mods() & MOD_MASK_GUI) {
-            report.h = xPolarity * xmove * cursorSpeed;
-            report.v = xPolarity * ymove * cursorSpeed;
-        }else{
-            report.x = xPolarity * xmove * cursorSpeed;
-            report.y = yPolarity * ymove * cursorSpeed;
-        }
-        // report.h = 0;
-        // report.v = 0;
-        //scrolltimer = 0;
-    }
+    int16_t xd = x-xcen;
+    int16_t yd = y-ycen;
+    if ( abs(xd) > x_dead || abs(yd) > y_dead ) {
+        float xperc = ONES( (float)xd / x_scale);
+        float yperc = ONES( (float)yd / y_scale);
+        int8_t xmove = (int8_t)(xperc * 127.0);
+        int8_t ymove = (int8_t)(yperc * 127.0);
 
-    //report.x   = axisToMouseComponent(xPin, xOrigin, maxCursorSpeed, xPolarity);
-    //report.y   = axisToMouseComponent(yPin, yOrigin, maxCursorSpeed, yPolarity);
+        if (get_mods() & MOD_MASK_GUI) {
+            float scroll_speed = (get_mods() & MOD_MASK_SHIFT) ? maxScrollSpeed : minScrollSpeed;
+            report.h = xPolarity * xmove * scroll_speed;
+            report.v = xPolarity * ymove * scroll_speed;
+        }else{
+            float cursor_speed = (get_mods() & MOD_MASK_SHIFT) ? maxCursorSpeed : minCursorSpeed;
+            report.x = xPolarity * xmove * cursor_speed;
+            report.y = yPolarity * ymove * cursor_speed;
+        }
+    }
     // mouse click
     // if (!readPin(E6)) {
     //     report.buttons |= MOUSE_BTN1;
