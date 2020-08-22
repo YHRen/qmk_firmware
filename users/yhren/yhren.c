@@ -4,6 +4,11 @@
 extern bool is_hid_enabled;
 extern uint32_t oled_screen_timer;
 #endif
+#if defined(POINTING_DEVICE_ENABLE)
+extern uint32_t mouse_btn_timer;
+extern bool is_ms_btn_released;
+#endif
+
 
 userspace_config_t userspace_config;
 
@@ -95,6 +100,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+//    case KC_MS_BTN1:
+//      mouse_btn_timer = timer_read32();
+//      return is_ms_btn_released;
+//      break;
     case MY_POINTER:
       if (record->event.pressed) {
         SEND_STRING("->");

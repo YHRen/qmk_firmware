@@ -76,11 +76,15 @@ float minScrollSpeed = 0.05;
 int8_t xPolarity = 1;
 int8_t yPolarity = -1;
 
-uint8_t cursorTimeout = 50;
+uint8_t cursorTimeout = 100;
 uint16_t lastCursor = 0;
 
 float prv_xmv = 0.0;
 float prv_ymv = 0.0;
+
+uint32_t mouse_btn_timer = 0;
+uint8_t mouse_btn_timeout = 50;
+bool is_ms_btn_released = false;
 
 void rolling_avg_move(float * perc, float * prv_mv){
     *perc = 0.95**perc + 0.05**prv_mv;
@@ -114,9 +118,13 @@ void pointing_device_task(void) {
             report.y = yPolarity * ymove * cursor_speed;
         }
     }
+
+// if ( timer_elapsed(mouse_btn_timer) < mouse_btn_timeout){
     if ( IS_LAYER_ON(_LOWER) ){
         report.buttons |= MOUSE_BTN1;
+//        is_ms_btn_released = false;
     } else {
+//        is_ms_btn_released = true;
         report.buttons &= ~MOUSE_BTN1;
     }
 
