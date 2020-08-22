@@ -47,6 +47,10 @@ __attribute__((weak)) void pointing_device_task(void) {
     // mouseReport.h = 127 max -127 min (scroll horizontal)
     // mouseReport.buttons = 0x1F (decimal 31, binary 00011111) max (bitmask for mouse buttons 1-5, 1 is rightmost, 5 is leftmost) 0x00 min
     // send the report
+    static uint8_t buttons_prev = 0;
+    extern int     tp_buttons;
+    mouseReport.buttons = ((mouseReport.buttons & ~(tp_buttons ^ buttons_prev)) | (tp_buttons & (tp_buttons ^ buttons_prev)));
+    buttons_prev = mouseReport.buttons;
     pointing_device_send();
 }
 

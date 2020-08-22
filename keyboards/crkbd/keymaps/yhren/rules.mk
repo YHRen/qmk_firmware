@@ -23,6 +23,7 @@ OLED_DRIVER_ENABLE         = yes
 HAPTIC_ENABLE              = no  #SOLENOID
 SLEEP_LED_ENABLE           = no  # Breathing sleep LED during USB suspend
 JOYSTICK_ENABLE            = yes
+POINTING_DEVICE_ENABLE     = yes
 BOOTLOADER = qmk-dfu
 #BOOTLOADER = avrdude   # Micro Pro
 

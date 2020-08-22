@@ -62,23 +62,30 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 const pin_t xPin = B5;
 const pin_t yPin = B4;
 
-uint16_t x_scale = 128;
-uint16_t y_scale = 128;
-uint16_t x_dead = 24;
-uint16_t y_dead = 24;
+float x_scale = 1024.0*8;
+float y_scale = 1024.0*8;
+uint16_t x_dead = 20;
+uint16_t y_dead = 20;
 int16_t xcen, ycen;
 
 float maxCursorSpeed = 0.9;  // holding shift
-float minCursorSpeed = 0.3;
+float minCursorSpeed = 0.2;
 float maxScrollSpeed = 0.3;  // holding shift
-float minScrollSpeed = 0.1;
+float minScrollSpeed = 0.05;
 
 int8_t xPolarity = 1;
 int8_t yPolarity = -1;
 
-uint8_t cursorTimeout = 100;
+uint8_t cursorTimeout = 50;
 uint16_t lastCursor = 0;
 
+float prv_xmv = 0.0;
+float prv_ymv = 0.0;
+
+void rolling_avg_move(float * perc, float * prv_mv){
+    *perc = 0.95**perc + 0.05**prv_mv;
+    prv_mv = perc;
+}
 
 void pointing_device_task(void) {
     if (timer_elapsed(lastCursor) < cursorTimeout) return;
@@ -90,8 +97,10 @@ void pointing_device_task(void) {
     int16_t xd = x-xcen;
     int16_t yd = y-ycen;
     if ( abs(xd) > x_dead || abs(yd) > y_dead ) {
-        float xperc = ONES( (float)xd / x_scale);
-        float yperc = ONES( (float)yd / y_scale);
+        float xperc = SIGN(xd) * ONES( (float)xd*xd / x_scale);
+        float yperc = SIGN(yd) * ONES( (float)yd*yd / y_scale);
+        rolling_avg_move(&xperc, &prv_xmv);
+        rolling_avg_move(&yperc, &prv_ymv);
         int8_t xmove = (int8_t)(xperc * 127.0);
         int8_t ymove = (int8_t)(yperc * 127.0);
 
@@ -105,6 +114,12 @@ void pointing_device_task(void) {
             report.y = yPolarity * ymove * cursor_speed;
         }
     }
+    if ( IS_LAYER_ON(_LOWER) ){
+        report.buttons |= MOUSE_BTN1;
+    } else {
+        report.buttons &= ~MOUSE_BTN1;
+    }
+
     // mouse click
     // if (!readPin(E6)) {
     //     report.buttons |= MOUSE_BTN1;

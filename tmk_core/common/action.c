@@ -404,7 +404,8 @@ void process_action(keyrecord_t *record, action_t action) {
             if (event.pressed) {
                 mousekey_on(action.key.code);
                 switch (action.key.code) {
-#    ifdef PS2_MOUSE_ENABLE
+//#    ifdef PS2_MOUSE_ENABLE
+#    if defined PS2_MOUSE_ENABLE || defined POINTING_DEVICE_ENABLE
                     case KC_MS_BTN1:
                         tp_buttons |= (1 << 0);
                         break;
@@ -422,7 +423,8 @@ void process_action(keyrecord_t *record, action_t action) {
             } else {
                 mousekey_off(action.key.code);
                 switch (action.key.code) {
-#    ifdef PS2_MOUSE_ENABLE
+//#    ifdef PS2_MOUSE_ENABLE
+#    if defined PS2_MOUSE_ENABLE || defined POINTING_DEVICE_ENABLE
                     case KC_MS_BTN1:
                         tp_buttons &= ~(1 << 0);
                         break;
