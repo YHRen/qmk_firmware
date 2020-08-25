@@ -57,3 +57,13 @@ __attribute__((weak)) void pointing_device_task(void) {
 report_mouse_t pointing_device_get_report(void) { return mouseReport; }
 
 void pointing_device_set_report(report_mouse_t newMouseReport) { mouseReport = newMouseReport; }
+
+#ifdef MOUSEKEY_ENABLE
+void pointing_device_mousekey_buttons(void)
+{
+    static uint8_t buttons_prev = 0;
+    extern int     tp_buttons;
+    mouseReport.buttons = ((mouseReport.buttons & ~(tp_buttons ^ buttons_prev)) | (tp_buttons & (tp_buttons ^ buttons_prev)));
+    buttons_prev = mouseReport.buttons;
+}
+#endif

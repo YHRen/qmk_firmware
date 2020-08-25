@@ -407,6 +407,9 @@ MATRIX_LOOP_END:
 #endif
 
 #ifdef POINTING_DEVICE_ENABLE
+    #ifdef MOUSEKEY_ENABLE
+    pointing_device_mousekey_buttons();
+    #endif
     pointing_device_task();
 #endif
 

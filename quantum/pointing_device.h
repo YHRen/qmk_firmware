@@ -27,5 +27,9 @@ void           pointing_device_task(void);
 void           pointing_device_send(void);
 report_mouse_t pointing_device_get_report(void);
 void           pointing_device_set_report(report_mouse_t newMouseReport);
+    #ifdef MOUSEKEY_ENABLE
+void           pointing_device_mousekey_buttons(void);
+    #endif
+
 
 #endif
