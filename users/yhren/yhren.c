@@ -124,7 +124,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
     case MY_END:
       if (record->event.pressed) {
-        SEND_STRING("'"SS_TAP(X_BSLASH)"n'");
+        SEND_STRING("'"SS_TAP(X_BSLASH)"n';");
+      }
+      return false;
+      break;
+    case MY_PARA:
+      if (record->event.pressed) {
+        SEND_STRING("()"SS_TAP(X_LEFT));
+      }
+      return false;
+      break;
+    case MY_SQAR:
+      if (record->event.pressed) {
+        SEND_STRING("[]"SS_TAP(X_LEFT));
+      }
+      return false;
+      break;
+    case MY_BRKT:
+      if (record->event.pressed) {
+        SEND_STRING("<>"SS_TAP(X_LEFT));
+      }
+      return false;
+      break;
+    case MY_CRLY:
+      if (record->event.pressed) {
+        SEND_STRING("{}"SS_TAP(X_LEFT));
+      }
+      return false;
+      break;
+    case MY_SELF:
+      if (record->event.pressed) {
+        SEND_STRING("self");
+      }
+      return false;
+      break;
+    case MY_RTRN:
+      if (record->event.pressed) {
+        SEND_STRING("return ");
+      }
+      return false;
+      break;
+    case MY_FLSE:
+      if (record->event.pressed) {
+        SEND_STRING("False");
+      }
+      return false;
+      break;
+    case MY_TRUE:
+      if (record->event.pressed) {
+        SEND_STRING("True");
       }
       return false;
       break;

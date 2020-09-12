@@ -57,6 +57,14 @@ enum userspace_keycodes {
   MY_COUT,
   MY_CIN,
   MY_END,
+  MY_PARA, // () KC_LEFT
+  MY_SQAR, // [] KC_LEFT
+  MY_BRKT, // <> KC_LEFT
+  MY_CRLY, // {} KC_LEFT
+  MY_SELF, // self
+  MY_FLSE, // False
+  MY_TRUE, // True
+  MY_RTRN, // return
   MY_HIDRAW,
 };
 
