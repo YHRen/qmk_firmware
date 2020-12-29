@@ -62,14 +62,18 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 const pin_t xPin = B5;
 const pin_t yPin = B4;
 
-float x_scale = 1024.0*8;
-float y_scale = 1024.0*8;
-uint16_t x_dead = 20;
-uint16_t y_dead = 20;
+/* float x_scale = 1024.0*8; */
+/* float y_scale = 1024.0*8; */
+float x_scale = 120.0;
+float y_scale = 120.0;
+uint16_t x_fast = 105; //20
+uint16_t y_fast = 135;
+uint16_t x_dead = 10; //20
+uint16_t y_dead = 10;
 int16_t xcen, ycen;
 
 float maxCursorSpeed = 0.9;  // holding shift
-float minCursorSpeed = 0.2;
+float minCursorSpeed = 0.3;  // 0.2
 float maxScrollSpeed = 0.3;  // holding shift
 float minScrollSpeed = 0.05;
 
@@ -82,10 +86,10 @@ uint16_t lastCursor = 0;
 float prv_xmv = 0.0;
 float prv_ymv = 0.0;
 
-void rolling_avg_move(float * perc, float * prv_mv){
-    *perc = 0.95**perc + 0.05**prv_mv;
-    prv_mv = perc;
-}
+/* void rolling_avg_move(float * perc, float * prv_mv){ */
+/*     *perc = 0.95**perc + 0.05**prv_mv; */
+/*     prv_mv = perc; */
+/* } */
 
 void pointing_device_task(void) {
     if (timer_elapsed(lastCursor) < cursorTimeout) return;
@@ -96,23 +100,36 @@ void pointing_device_task(void) {
     int16_t y = analogReadPin(yPin);
     int16_t xd = x-xcen;
     int16_t yd = y-ycen;
-    if ( abs(xd) > x_dead || abs(yd) > y_dead ) {
-        float xperc = SIGN(xd) * ONES( (float)xd*xd / x_scale);
-        float yperc = SIGN(yd) * ONES( (float)yd*yd / y_scale);
-        rolling_avg_move(&xperc, &prv_xmv);
-        rolling_avg_move(&yperc, &prv_ymv);
-        int8_t xmove = (int8_t)(xperc * 127.0);
-        int8_t ymove = (int8_t)(yperc * 127.0);
+    float cursor_speed = 0.0;
+    int8_t xmove = 0, ymove= 0;
+    if ( abs(xd) > x_fast || abs(yd) > y_fast ) {
+        cursor_speed = maxCursorSpeed;
+        float xperc = ONES( (float)xd / x_scale);
+        float yperc = ONES( (float)yd / y_scale);
+        /* rolling_avg_move(&xperc, &prv_xmv); */
+        /* rolling_avg_move(&yperc, &prv_ymv); */
+        xmove = (int8_t)(xperc * 127.0);
+        ymove = (int8_t)(yperc * 127.0);
+    }else if ( abs(xd) > x_dead || abs(yd) > y_dead ) {
+        cursor_speed = minCursorSpeed;
+        float xperc = SIGN(xd) * ONES( (float)xd*xd / (100*x_scale));
+        float yperc = SIGN(yd) * ONES( (float)yd*yd / (100*y_scale));
+        /* float xperc = ONES( (float)xd / x_scale); */
+        /* float yperc = ONES( (float)yd / y_scale); */
+        /* rolling_avg_move(&xperc, &prv_xmv); */
+        /* rolling_avg_move(&yperc, &prv_ymv); */
+        xmove = (int8_t)(xperc * 127.0);
+        ymove = (int8_t)(yperc * 127.0);
+    }
 
-        if (get_mods() & MOD_MASK_GUI) {
-            float scroll_speed = (get_mods() & MOD_MASK_SHIFT) ? maxScrollSpeed : minScrollSpeed;
-            report.h = xPolarity * xmove * scroll_speed;
-            report.v = xPolarity * ymove * scroll_speed;
-        }else{
-            float cursor_speed = (get_mods() & MOD_MASK_SHIFT) ? maxCursorSpeed : minCursorSpeed;
-            report.x = xPolarity * xmove * cursor_speed;
-            report.y = yPolarity * ymove * cursor_speed;
-        }
+    if (get_mods() & MOD_MASK_GUI) {
+        float scroll_speed = (get_mods() & MOD_MASK_SHIFT) ? maxScrollSpeed : minScrollSpeed;
+        report.h = xPolarity * xmove * scroll_speed;
+        report.v = xPolarity * ymove * scroll_speed;
+    }else{
+        /* float cursor_speed = (get_mods() & MOD_MASK_SHIFT) ? maxCursorSpeed : minCursorSpeed; */
+        report.x = xPolarity * xmove * cursor_speed;
+        report.y = yPolarity * ymove * cursor_speed;
     }
 
 // if ( timer_elapsed(mouse_btn_timer) < mouse_btn_timeout){
